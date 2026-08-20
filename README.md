@@ -90,3 +90,18 @@ python3 your_simulation.py
 - The Python package version and the SRIM/TRIM executable version are separate.
 - The installed combination recorded here is PySRIM 0.5.10 with SRIM/TRIM 2013.
 - The original helper script is available at `pysrim/install.sh`.
+
+## Reusable Codex skill
+
+This repository also contains the reusable skill at
+`skills/pysrim-wsl-ubuntu/`. It includes an automated installer script and
+verification guidance. Install the skill into Codex’s local skills directory:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/pysrim-wsl-ubuntu ~/.codex/skills/
+```
+
+Then ask Codex to install PySRIM on WSL Ubuntu, or invoke the skill explicitly
+as `$pysrim-wsl-ubuntu`. The installer still requires user authorization for
+sudo package installation and the interactive SRIM installer.

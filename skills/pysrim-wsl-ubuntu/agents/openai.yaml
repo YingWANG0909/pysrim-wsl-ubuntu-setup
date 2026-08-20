@@ -1,0 +1,4 @@
+interface:
+  display_name: "PySRIM WSL Ubuntu"
+  short_description: "Install PySRIM and SRIM/TRIM on WSL Ubuntu"
+  default_prompt: "Install PySRIM with SRIM/TRIM support on this WSL Ubuntu system."
