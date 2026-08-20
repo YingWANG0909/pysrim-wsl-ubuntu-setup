@@ -2,6 +2,18 @@
 
 This records the working PySRIM setup used on this WSL Ubuntu 22.04.5 LTS system.
 
+## PySRIM attribution
+
+PySRIM was created and maintained by Christopher Ostrouchov (`costrouc`).
+This guide uses the upstream project available at:
+
+- GitHub: <https://github.com/costrouc/pysrim>
+- Project homepage: <https://gitlab.com/costrouc/pysrim>
+
+PySRIM is released under the MIT License. This repository documents how to
+install and run the upstream package; it is not a fork or replacement for the
+PySRIM project.
+
 ## Environment
 
 - Ubuntu 22.04.5 LTS (Jammy)

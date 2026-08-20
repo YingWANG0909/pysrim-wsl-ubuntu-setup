@@ -7,6 +7,10 @@ description: Install and verify PySRIM with SRIM/TRIM 2013 on WSL Ubuntu, includ
 
 Use this skill when a user wants PySRIM simulations to run on WSL Ubuntu. PySRIM is the Python automation layer; it does not contain SRIM/TRIM, so the Windows SRIM 2013 executable must also be installed under Wine.
 
+PySRIM upstream is the MIT-licensed project by Christopher Ostrouchov
+(`costrouc`): https://github.com/costrouc/pysrim. Preserve this attribution
+when modifying or redistributing this skill.
+
 ## Workflow
 
 1. Confirm the host is Ubuntu under WSL and inspect existing Python, Wine, PySRIM, and SRIM state before changing anything.
