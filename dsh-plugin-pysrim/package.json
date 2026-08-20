@@ -1,0 +1,26 @@
+{
+  "name": "@yingwang0909/dsh-plugin-pysrim-wsl",
+  "version": "0.1.1",
+  "description": "DeepSeek Harness tools for PySRIM on WSL Ubuntu",
+  "type": "module",
+  "main": "src/index.js",
+  "files": [
+    "src/index.js",
+    "scripts/*.py",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.7"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-shell": "^0.1.0-rc.7"
+  }
+}

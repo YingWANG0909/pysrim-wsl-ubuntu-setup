@@ -1,0 +1,3 @@
+- insert:
+    - id: pysrim
+      name: '@yingwang0909/dsh-plugin-pysrim-wsl'

@@ -118,6 +118,40 @@ Then ask Codex to install PySRIM on WSL Ubuntu, or invoke the skill explicitly
 as `$pysrim-wsl-ubuntu`. The installer still requires user authorization for
 sudo package installation and the interactive SRIM installer.
 
+## WSL DeepSeek Harness plugin
+
+The `dsh-plugin-pysrim/` directory is a native DeepSeek Harness plugin for
+this already-installed WSL environment. It does not reinstall PySRIM, Wine,
+Xvfb, or SRIM; it gives DeepSeek chat structured tools that call the existing
+installation:
+
+- `pysrim_status` checks Python, PySRIM, Wine, Xvfb, and `TRIM.exe`.
+- `pysrim_run` runs a validated TRIM calculation from an ion, energy, ion
+  count, and target layers.
+- `pysrim_outputs` lists the generated SRIM result files.
+
+Install it into a local DeepSeek Harness web profile from a WSL terminal:
+
+```bash
+cd ~/.dsh/profiles/web
+pnpm add /path/to/pysrim-wsl-ubuntu-setup/dsh-plugin-pysrim
+```
+
+Add `@yingwang0909/dsh-plugin-pysrim-wsl` to the profile's
+`dsh.profile.bundles` list, run `pnpm install`, and restart the profile. The
+package includes its Cordis bundle patch, so no separate plugin code or MCP
+server is needed. By default it uses `/tmp/srim`; override that location with
+`PYSRIM_DSH_SRIM_DIR` before starting Harness.
+
+After startup, ask DeepSeek chat for example work such as:
+
+> Check the PySRIM installation, then run one 200 keV carbon ion through a
+> 10,000 Å SiC layer at 3.21 g/cm³ and summarize the range and vacancies.
+
+The plugin serializes access to SRIM's shared output directory so concurrent
+chat requests do not overwrite one another. It intentionally exposes no
+arbitrary shell command tool.
+
 ## Troubleshooting from the verified test
 
 The difficult part was not the Python package; it was making the old 32-bit
