@@ -20,6 +20,7 @@ python3 -m pip install --user pysrim
 need_wine=0
 command -v wine >/dev/null 2>&1 || need_wine=1
 [[ -x /usr/lib/wine/wine ]] || need_wine=1
+command -v winetricks >/dev/null 2>&1 || need_wine=1
 
 if (( need_wine )); then
   if ! command -v sudo >/dev/null 2>&1; then
@@ -28,7 +29,12 @@ if (( need_wine )); then
   fi
   sudo dpkg --add-architecture i386
   sudo apt-get update
-  sudo apt-get install -y wine wine32 xvfb
+  sudo apt-get install -y wine wine32 xvfb winetricks
+fi
+
+if ! command -v winetricks >/dev/null 2>&1; then
+  printf 'winetricks is required for SRIM legacy Visual Basic controls.\n' >&2
+  exit 1
 fi
 
 mkdir -p "$srim_dir"
@@ -45,6 +51,11 @@ fi
 
 printf 'Launching the interactive SRIM 2013 installer under Wine.\n'
 wine "$srim_installer"
+
+printf 'Installing the legacy Visual Basic controls required by SRIM.\n'
+xvfb-run -a winetricks -q \
+  comdlg32ocx msflxgrd richtx32 vb5run comctl32ocx tabctl32
+wineboot -u
 
 python3 -c 'import srim; print("PySRIM import OK:", srim.__file__)'
 wine cmd /c echo Wine32-working

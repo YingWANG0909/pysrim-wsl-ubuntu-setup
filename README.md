@@ -105,3 +105,92 @@ cp -R skills/pysrim-wsl-ubuntu ~/.codex/skills/
 Then ask Codex to install PySRIM on WSL Ubuntu, or invoke the skill explicitly
 as `$pysrim-wsl-ubuntu`. The installer still requires user authorization for
 sudo package installation and the interactive SRIM installer.
+
+## Troubleshooting from the verified test
+
+The difficult part was not the Python package; it was making the old 32-bit
+SRIM/TRIM GUI run correctly under Wine.
+
+### `pysrim.__version__` raises `AttributeError`
+
+This is not an installation failure. The distribution is named `pysrim`, but
+the implementation is imported as `srim`, and this release does not expose a
+`pysrim.__version__` attribute. Check the installed release with:
+
+```bash
+python3 -m pip show pysrim
+python3 -c "import srim; print(srim.__file__)"
+```
+
+### Wine reports that Wine32 is missing
+
+SRIM/TRIM is a 32-bit Windows application. Enable the i386 architecture and
+install both Wine components:
+
+```bash
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install -y wine wine32 xvfb winetricks
+```
+
+After installing Wine32, refresh the prefix:
+
+```bash
+wineboot -u
+```
+
+### `Run-time error 339` or missing `MSFLXGRD.OCX`
+
+SRIM uses legacy Visual Basic controls. The successful test installed the VB5
+runtime and these controls with Winetricks:
+
+```bash
+xvfb-run -a winetricks -q \
+  comdlg32ocx msflxgrd richtx32 vb5run comctl32ocx tabctl32
+```
+
+The controls correspond to `COMDLG32.OCX`, `MSFLXGRD.OCX`, `RICHTX32.OCX`,
+`COMCTL32.OCX`, and `TABCTL32.OCX`. Installing them with Winetricks is
+preferred to copying files and running `regsvr32` manually, because manual
+registration initially left incomplete CLSID entries.
+
+### `class ... not registered` for `StdFont`
+
+The missing class was the standard OLE `StdFont` class
+(`{0BE35203-8F91-11CE-9DE3-00AA004BB851}`), backed by Wine’s `oleaut32.dll`.
+The first repair was `wineboot -u`; if a healthy prefix still reports this
+class as missing, recreate or repair the prefix before retrying SRIM. The
+message can also be harmless Wine diagnostic noise if TRIM continues and
+produces output files.
+
+### Wine says no X server or Xvfb cannot bind display `:99`
+
+SRIM is graphical even when PySRIM is launched from Python. Use the automatic
+display allocation used by the successful test:
+
+```bash
+xvfb-run -a -s '-screen 0 1280x1024x24' wine /tmp/srim/TRIM.exe
+```
+
+If a stale display lock is known to be present, stop the old Xvfb process and
+remove only its exact lock/socket before retrying. Using `xvfb-run -a` avoids
+most fixed-display conflicts. When running PySRIM directly, export the active
+display so the Wine subprocess inherits it:
+
+```bash
+export DISPLAY=:99
+python3 your_simulation.py
+```
+
+### TRIM starts but produces no output
+
+PySRIM writes `TRIM.IN` and launches `TRIM.exe`; it does not itself wrap the
+Wine process in Xvfb. Confirm that `TRIMAUTO` contains `1`, run TRIM under
+`xvfb-run -a`, and check for `RANGE.txt`, `IONIZ.txt`, `PHONON.txt`,
+`VACANCY.txt`, and `E2RECOIL.txt` in the SRIM directory. The end-to-end test
+then parsed the files with `srim.output.Results` successfully.
+
+The verified test used a 200 keV carbon ion in a SiC target and obtained
+plausible output: approximately 650 Å range and approximately 3 vacancies per
+ion. It also ran the website-style example of 3 MeV Ni into a 20,000 Å Ni
+layer with 25 ions.

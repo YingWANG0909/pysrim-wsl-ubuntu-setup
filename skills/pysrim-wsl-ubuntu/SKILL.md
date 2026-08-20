@@ -15,11 +15,17 @@ Use this skill when a user wants PySRIM simulations to run on WSL Ubuntu. PySRIM
 4. Verify `python3 -c "import srim"`, `wine cmd /c echo ...`, and the SRIM executable path. The distribution name is `pysrim`, while the usable Python module is `srim`.
 5. For WSL without a desktop, start Xvfb and export `DISPLAY` before running simulations.
 
+The installer also installs the legacy Visual Basic controls used by SRIM with
+Winetricks (`comdlg32ocx`, `msflxgrd`, `richtx32`, `vb5run`, `comctl32ocx`, and
+`tabctl32`) and refreshes the Wine prefix with `wineboot -u`. These controls
+fix the observed `Run-time error 339` / missing `MSFLXGRD.OCX` failure.
+
 ## Important constraints
 
 - SRIM 2013 is a 32-bit Windows application. Wine64 alone is insufficient; `wine32` and the i386 architecture are required.
 - SRIM/TRIM 2013 is downloaded from `srim.org`; do not redistribute its installer or commit it to a repository.
 - Do not upload the installed Python site-packages, Wine prefix, or SRIM executable. Document commands and distribute only the skill and non-proprietary examples.
 - If sudo, network access, or the interactive SRIM installer is unavailable, stop with the exact manual command or next action instead of claiming installation completed.
+- Prefer `xvfb-run -a` for TRIM because fixed display `:99` can collide with stale Xvfb locks.
 
 The detailed installation reference is [README.md](../../README.md). The executable workflow is [scripts/install_pysrim_wsl.sh](scripts/install_pysrim_wsl.sh).
